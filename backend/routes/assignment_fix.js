@@ -7,7 +7,8 @@ const {
   updateAssignment,
   deleteAssignment,
   aiReminder,
-} = require("../controllers/assignmentController");  // ✅ fixed
+} = require('../controllers/assignmentController_fix')
+
 
 router.get("/", protect, getAssignments);
 router.post("/", protect, createAssignment);

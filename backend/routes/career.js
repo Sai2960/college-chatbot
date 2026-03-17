@@ -11,7 +11,8 @@ const {
   interviewPractice,
   jobSuggestions,
   skillGapAnalyzer,
-} = require('../controllers/Careercontroller');
+} = require('../controllers/careerController_fix')
+
 
 // Existing public routes
 router.post('/compare',          compareTwoCourses);

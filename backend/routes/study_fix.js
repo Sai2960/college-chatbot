@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { protect } = require("../middleware/auth");  // ✅ fixed
-const { generateStudyPlan } = require("../controllers/studyController");  // ✅ fixed
+const { generateStudyPlan } =require('../controllers/studyController_fix')
+
+
 
 router.post("/generate", protect, generateStudyPlan);
 

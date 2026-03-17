@@ -7,7 +7,7 @@ const {
   uploadSyllabus,
   askSyllabus,
   syllabusStatus,
-} = require("../controllers/syllabusController");
+} = require('../controllers/syllabusController_fix')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
