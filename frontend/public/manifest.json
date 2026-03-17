@@ -1,0 +1,12 @@
+
+{
+  "name": "College AI Assistant",
+  "short_name": "College AI",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#667eea",
+  "background_color": "#111827",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }
+  ]
+}
