@@ -67,10 +67,10 @@ app.use('/api/chat',        require('./routes/chat'));
 app.use('/api/career',      require('./routes/career'));
 
 // New feature routes
-app.use('/api/syllabus',    require('./routes/syllabus'));
-app.use('/api/assignments', require('./routes/assignment'));
-app.use('/api/study',       require('./routes/study'));
-app.use('/api/quiz',        require('./routes/quiz'));
+app.use('/api/syllabus',    require('./routes/syllabus_fix'));
+app.use('/api/assignments', require('./routes/assignment_fix'));
+app.use('/api/study',       require('./routes/study_fix'));
+app.use('/api/quiz',        require('./routes/quiz_fix'));
 app.use('/api/social', require('./routes/social')); 
 
 // ─── Global Error Handler ─────────────────────────────────────────────────────
