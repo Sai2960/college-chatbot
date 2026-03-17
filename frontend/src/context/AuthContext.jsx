@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Configure axios defaults
-  axios.defaults.baseURL = "http://localhost:5000";
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   // ✅ FIXED: Load user from localStorage AND verify with backend
   useEffect(() => {
