@@ -1,6 +1,6 @@
 const Chat = require('../models/Chat');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const { generateGroqResponse, testGroqConnection } = require('./Groqcontroller')
+const { generateGroqResponse, testGroqConnection } = require('./GroqController_new')
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
