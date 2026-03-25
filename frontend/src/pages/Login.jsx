@@ -110,13 +110,15 @@ function Login() {
         .pg {
           min-height: 100vh;
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           justify-content: center;
           /* Warm creamy base that lets colours bleed through beautifully */
           background: #fdf6ee;
           font-family: 'Syne', sans-serif;
           position: relative;
-          overflow: hidden;
+          overflow-x: hidden;
+          overflow-y: auto;
+          padding: 2.5rem 0 2.5rem;
         }
 
         /* Warm noise texture */
