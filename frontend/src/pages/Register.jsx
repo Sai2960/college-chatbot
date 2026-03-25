@@ -498,12 +498,12 @@ function Register() {
                       onChange={handleChange}
                       onFocus={()=>setFocused('course')} onBlur={()=>setFocused(null)}
                     >
-                      <option value="BCA">BCA (6 semesters)</option>
-                      <option value="MCA">MCA (4 semesters)</option>
-                      <option value="B.Tech">B.Tech (8 semesters)</option>
-                      <option value="M.Tech">M.Tech (4 semesters)</option>
-                      <option value="BSc IT">BSc IT (6 semesters)</option>
-                      <option value="MSc IT">MSc IT (4 semesters)</option>
+                      <option value="BCA">BCA</option>
+                      <option value="MCA">MCA</option>
+                      <option value="B.Tech">B.Tech</option>
+                      <option value="M.Tech">M.Tech</option>
+                      <option value="BSc IT">BSc IT</option>
+                      <option value="MSc IT">MSc IT</option>
                     </select>
                     <svg className="sel-arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <polyline points="6 9 12 15 18 9"/>
