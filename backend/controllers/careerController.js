@@ -5,7 +5,7 @@ const {
   getCareerGuidance, 
   compareCourses, 
   getProgrammingHelp 
-} = require('./GroqController_new');S
+} = require('./GroqController_new');
 
 // ─── EXISTING FUNCTIONS (unchanged) ──────────────────────────
 
