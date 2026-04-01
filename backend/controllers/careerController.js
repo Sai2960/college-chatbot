@@ -7,7 +7,7 @@ const {
   getProgrammingHelp 
 } = require('./GroqController_new');
 
-// ─── EXISTING FUNCTIONS (unchanged) ──────────────────────────
+// ─── EXISTING FUNCTIONS ───────────────────────────────────────
 
 const getCareerAdvice = async (req, res) => {
   try {
@@ -129,29 +129,34 @@ For each question provide:
 3. A model answer (2-3 sentences)
 4. Tips to answer well
 
-Format as JSON array:
+Return ONLY a valid JSON array, no markdown, no explanation:
 [
   {
     "id": 1,
     "question": "...",
-    "category": "technical/hr/situational",
+    "category": "technical",
     "lookingFor": "...",
     "modelAnswer": "...",
     "tip": "..."
   }
-]
-
-Return ONLY valid JSON, no markdown.`;
+]`;
 
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 3000,
+      max_tokens: 4096,
     });
 
     let raw = completion.choices[0]?.message?.content || "[]";
     raw = raw.replace(/```json|```/g, "").trim();
-    const questions = JSON.parse(raw);
+
+    // Extract JSON array safely
+    const arrayMatch = raw.match(/\[[\s\S]*\]/);
+    if (!arrayMatch) {
+      return res.status(500).json({ success: false, message: "AI returned invalid response. Please try again." });
+    }
+
+    const questions = JSON.parse(arrayMatch[0]);
     res.status(200).json({ success: true, data: { role, questions } });
   } catch (error) {
     console.error('Interview practice error:', error);
@@ -171,7 +176,7 @@ Student Profile:
 - Skills: ${skills || 'Basic programming'}
 - Interests: ${interests || 'Software development'}
 
-Provide suggestions as JSON:
+Return ONLY valid JSON, no markdown:
 {
   "internships": [
     {
@@ -193,9 +198,7 @@ Provide suggestions as JSON:
     }
   ],
   "tips": ["tip1", "tip2", "tip3"]
-}
-
-Return ONLY valid JSON, no markdown.`;
+}`;
 
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
@@ -205,7 +208,13 @@ Return ONLY valid JSON, no markdown.`;
 
     let raw = completion.choices[0]?.message?.content || "{}";
     raw = raw.replace(/```json|```/g, "").trim();
-    const suggestions = JSON.parse(raw);
+
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return res.status(500).json({ success: false, message: "AI returned invalid response. Please try again." });
+    }
+
+    const suggestions = JSON.parse(jsonMatch[0]);
     res.status(200).json({ success: true, data: suggestions });
   } catch (error) {
     console.error('Job suggestions error:', error);
@@ -223,14 +232,14 @@ const skillGapAnalyzer = async (req, res) => {
 Current Skills: ${currentSkills || 'Basic programming knowledge'}
 Target Role: ${targetRole}
 
-Provide analysis as JSON:
+Return ONLY valid JSON, no markdown:
 {
-  "currentLevel": "beginner/intermediate/advanced",
+  "currentLevel": "beginner",
   "targetRole": "${targetRole}",
   "missingSkills": [
     {
       "skill": "...",
-      "priority": "high/medium/low",
+      "priority": "high",
       "timeToLearn": "...",
       "resources": ["resource1", "resource2"]
     }
@@ -244,11 +253,9 @@ Provide analysis as JSON:
       "projects": ["project1"]
     }
   ],
-  "estimatedTimeToReady": "...",
-  "readinessScore": 0-100
-}
-
-Return ONLY valid JSON, no markdown.`;
+  "estimatedTimeToReady": "3 months",
+  "readinessScore": 40
+}`;
 
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
@@ -258,7 +265,13 @@ Return ONLY valid JSON, no markdown.`;
 
     let raw = completion.choices[0]?.message?.content || "{}";
     raw = raw.replace(/```json|```/g, "").trim();
-    const analysis = JSON.parse(raw);
+
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return res.status(500).json({ success: false, message: "AI returned invalid response. Please try again." });
+    }
+
+    const analysis = JSON.parse(jsonMatch[0]);
     res.status(200).json({ success: true, data: analysis });
   } catch (error) {
     console.error('Skill gap error:', error);
