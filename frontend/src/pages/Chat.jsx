@@ -22,7 +22,7 @@ import Sidebar, { FeaturePanel } from "../components/Sidebar";
 import Message from "../components/Message";
 import jsPDF from "jspdf";
 
-axios.defaults.baseURL = "http://localhost:5000";
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function Chat() {
   const { user, logout, setUser } = useAuth();
