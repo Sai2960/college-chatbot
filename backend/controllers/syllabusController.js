@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const pdfParse = require("pdf-parse");  // ✅ back to normal import
+const pdfParse = require("pdf-parse");
 const Groq = require("groq-sdk");
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
@@ -18,7 +18,9 @@ const uploadSyllabus = async (req, res) => {
 
     if (!text || text.trim().length === 0) {
       if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
-      return res.status(400).json({ message: "Could not extract text. Make sure it's not a scanned image." });
+      return res.status(400).json({
+        message: "Could not extract text. Make sure it's not a scanned image.",
+      });
     }
 
     const userId = req.user?._id || req.user?.id || "guest";
@@ -33,7 +35,8 @@ const uploadSyllabus = async (req, res) => {
     });
   } catch (err) {
     console.error("Syllabus upload error:", err);
-    if (req.file?.path && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+    if (req.file?.path && fs.existsSync(req.file.path))
+      fs.unlinkSync(req.file.path);
     return res.status(500).json({
       message: "Failed to process syllabus",
       error: process.env.NODE_ENV === "development" ? err.message : undefined,
@@ -44,12 +47,14 @@ const uploadSyllabus = async (req, res) => {
 const askSyllabus = async (req, res) => {
   try {
     const { question } = req.body;
-    if (!question?.trim()) return res.status(400).json({ message: "Question is required" });
+    if (!question?.trim())
+      return res.status(400).json({ message: "Question is required" });
 
     const userId = req.user?._id || req.user?.id || "guest";
     const syllabusText = syllabusStore[userId];
 
-    if (!syllabusText) return res.status(400).json({ message: "Please upload a syllabus first" });
+    if (!syllabusText)
+      return res.status(400).json({ message: "Please upload a syllabus first" });
 
     const prompt = `You are a helpful college assistant. Based on the following syllabus content, answer the student's question clearly and concisely.
 
@@ -61,10 +66,8 @@ STUDENT QUESTION: ${question}
 Answer:`;
 
     const completion = await groq.chat.completions.create({
-model: "llama-3.3-70b-versatile",
-",
-
-messages: [{ role: "user", content: prompt }],
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
       max_tokens: 1024,
     });
 
