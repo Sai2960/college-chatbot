@@ -38,10 +38,8 @@ Generate a structured study schedule in this exact JSON format (return ONLY vali
 }`;
 
     const completion = await groq.chat.completions.create({
-model: "llama-3.3-70b-versatile",
-",
-
-messages: [{ role: "user", content: prompt }],
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
       max_tokens: 2048,
     });
 
