@@ -11,7 +11,8 @@ const {
   interviewPractice,
   jobSuggestions,
   skillGapAnalyzer,
-} = require('../controllers/careerController_fix')
+} = require('../controllers/careerController')
+
 
 
 // Existing public routes

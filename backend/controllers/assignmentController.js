@@ -84,7 +84,7 @@ const aiReminder = async (req, res) => {
 
     const completion = await groq.chat.completions.create({
 model: "llama-3.3-70b-versatile",
-",
+
       messages: [{ role: "user", content: prompt }],
       max_tokens: 200,
     });
