@@ -27,7 +27,8 @@ Return ONLY valid JSON in this exact format (no explanation, no markdown):
 }`;
 
     const completion = await groq.chat.completions.create({
-model: "llama3-70b-8192",
+model: "model: "llama-3.3-70b-versatile"
+",
 
 messages: [{ role: "user", content: prompt }],
       max_tokens: 2048,
