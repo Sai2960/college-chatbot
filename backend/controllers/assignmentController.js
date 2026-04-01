@@ -61,7 +61,7 @@ const deleteAssignment = async (req, res) => {
   }
 };
 
-// POST /api/assignments/ai-remind  — AI generates a reminder/tip
+// POST /api/assignments/ai-remind
 const aiReminder = async (req, res) => {
   try {
     const assignments = await Assignment.find({
@@ -83,8 +83,7 @@ const aiReminder = async (req, res) => {
     const prompt = `You are a helpful college assistant. The student has these pending assignments:\n${list}\n\nGive a short motivating reminder and suggest which one to tackle first and why. Keep it under 100 words.`;
 
     const completion = await groq.chat.completions.create({
-model: "llama-3.3-70b-versatile",
-
+      model: "llama-3.3-70b-versatile",
       messages: [{ role: "user", content: prompt }],
       max_tokens: 200,
     });

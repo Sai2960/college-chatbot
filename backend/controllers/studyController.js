@@ -20,10 +20,10 @@ Details:
 - Available study hours per day: ${hoursPerDay}
 - Today's date: ${today}
 
-Generate a structured study schedule in this exact JSON format (return ONLY valid JSON, no explanation):
+Generate a structured study schedule in this exact JSON format (return ONLY valid JSON, no explanation, no markdown):
 {
-  "totalDays": number,
-  "hoursPerDay": number,
+  "totalDays": 7,
+  "hoursPerDay": ${hoursPerDay},
   "plan": [
     {
       "day": 1,
@@ -35,12 +35,14 @@ Generate a structured study schedule in this exact JSON format (return ONLY vali
     }
   ],
   "generalTips": ["tip1", "tip2", "tip3"]
-}`;
+}
+
+Keep the plan to a maximum of 7 days. Return ONLY valid compact JSON.`;
 
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 2048,
+      max_tokens: 4096,
     });
 
     let raw = completion.choices[0]?.message?.content || "{}";
@@ -48,7 +50,13 @@ Generate a structured study schedule in this exact JSON format (return ONLY vali
     // Strip markdown code fences if present
     raw = raw.replace(/```json|```/g, "").trim();
 
-    const plan = JSON.parse(raw);
+    // Extract JSON object if there's extra text
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return res.status(500).json({ message: "AI returned invalid response. Please try again." });
+    }
+
+    const plan = JSON.parse(jsonMatch[0]);
     res.json(plan);
   } catch (err) {
     console.error("Study plan error:", err);
