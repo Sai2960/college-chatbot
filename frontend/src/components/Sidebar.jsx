@@ -46,7 +46,6 @@ import {
 } from "react-icons/fa";
 import { HiOutlineSun, HiOutlineMoon, HiSparkles } from "react-icons/hi";
 
-
 // ─── Feature Panel imports ────────────────────────────────────
 import SyllabusUploader from "./SyllabusUploader";
 import AssignmentTracker from "./AssignmentTracker";
@@ -55,7 +54,6 @@ import QuizGenerator from "./QuizGenerator";
 import NotesSummarizer from "./NotesSummarizer";
 import CareerTools from "./CareerTools";
 import SocialFeatures from "./SocialFeatures";
-// Add these imports at the top
 import PomodoroTimer from "./PomodoroTimer";
 import GPACalculator from "./GPACalculator";
 import FlashcardGenerator from "./FlashcardGenerator";
@@ -70,9 +68,7 @@ const ThemeContext = React.createContext();
 
 export const useTheme = () => {
   const context = React.useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
+  if (!context) throw new Error("useTheme must be used within a ThemeProvider");
   return context;
 };
 
@@ -127,45 +123,44 @@ const getThemeStyles = (isDarkMode) => ({
 
 // ─── Feature Panel Definitions ───────────────────────────────
 const FEATURE_TABS = [
-  { id: "syllabus", label: "Syllabus Q&A", icon: FaFilePdf, color: "text-red-400" },
-  { id: "assignments", label: "Assignments", icon: FaClipboardList, color: "text-blue-400" },
-  { id: "study", label: "Study Planner", icon: FaCalendarAlt, color: "text-green-400" },
-  { id: "quiz", label: "Quiz Generator", icon: FaBrain, color: "text-purple-400" },
-  { id: "notes", label: "Notes Summarizer", icon: FaStickyNote, color: "text-yellow-400" },
-  { id: "career", label: "Career Tools", icon: FaBriefcase, color: "text-orange-400" }, // ← NEW
-  { id: "social", label: "Social", icon: FaUsers, color: "text-pink-400" },
-  { id: "pomodoro", label: "Pomodoro", icon: FaClock, color: "text-red-400" },
-  { id: "gpa", label: "GPA Calc", icon: FaChartBar, color: "text-blue-400" },
-  { id: "flashcards", label: "Flashcards", icon: FaBrain, color: "text-pink-400" },
-  { id: "debugger", label: "Debugger", icon: FaCode, color: "text-green-400" },
-  { id: "dashboard", label: "Dashboard", icon: FaChartLine, color: "text-cyan-400" },
-  { id: "attendance", label: "Attendance", icon: FaCheckCircle, color: "text-yellow-400" },
-  { id: "essay", label: "Essay AI", icon: FaFileAlt, color: "text-indigo-400" },
-  { id: "timetable", label: "Timetable", icon: FaCalendarAlt, color: "text-orange-400" },
+  { id: "syllabus",    label: "Syllabus Q&A",    icon: FaFilePdf,       color: "text-red-400"    },
+  { id: "assignments", label: "Assignments",      icon: FaClipboardList, color: "text-blue-400"   },
+  { id: "study",       label: "Study Planner",    icon: FaCalendarAlt,   color: "text-green-400"  },
+  { id: "quiz",        label: "Quiz Generator",   icon: FaBrain,         color: "text-purple-400" },
+  { id: "notes",       label: "Notes Summarizer", icon: FaStickyNote,    color: "text-yellow-400" },
+  { id: "career",      label: "Career Tools",     icon: FaBriefcase,     color: "text-orange-400" },
+  { id: "social",      label: "Social",           icon: FaUsers,         color: "text-pink-400"   },
+  { id: "pomodoro",    label: "Pomodoro",         icon: FaClock,         color: "text-red-400"    },
+  { id: "gpa",         label: "GPA Calc",         icon: FaChartBar,      color: "text-blue-400"   },
+  { id: "flashcards",  label: "Flashcards",       icon: FaBrain,         color: "text-pink-400"   },
+  { id: "debugger",    label: "Debugger",         icon: FaCode,          color: "text-green-400"  },
+  { id: "dashboard",   label: "Dashboard",        icon: FaChartLine,     color: "text-cyan-400"   },
+  { id: "attendance",  label: "Attendance",       icon: FaCheckCircle,   color: "text-yellow-400" },
+  { id: "essay",       label: "Essay AI",         icon: FaFileAlt,       color: "text-indigo-400" },
+  { id: "timetable",   label: "Timetable",        icon: FaCalendarAlt,   color: "text-orange-400" },
 ];
 
-// ─── FeaturePanel: exported so Chat.jsx can use it ───────────
+// ─── FeaturePanel ─────────────────────────────────────────────
 export function FeaturePanel({ isDarkMode, onClose }) {
   const [activeTab, setActiveTab] = useState("syllabus");
   const styles = getThemeStyles(isDarkMode);
 
   const panelContent = {
-    syllabus: <SyllabusUploader isDarkMode={isDarkMode} />,
+    syllabus:    <SyllabusUploader isDarkMode={isDarkMode} />,
     assignments: <AssignmentTracker isDarkMode={isDarkMode} />,
-    study: <StudyPlanner isDarkMode={isDarkMode} />,
-    quiz: <QuizGenerator isDarkMode={isDarkMode} />,
-    notes: <NotesSummarizer isDarkMode={isDarkMode} />,
-    career: <CareerTools isDarkMode={isDarkMode} />,  // ← NEW
-    social: <SocialFeatures isDarkMode={isDarkMode} />,  // ← NEW
-    // Add these to panelContent object
-    pomodoro: <PomodoroTimer isDarkMode={isDarkMode} />,
-    gpa: <GPACalculator isDarkMode={isDarkMode} />,
-    flashcards: <FlashcardGenerator isDarkMode={isDarkMode} />,
-    debugger: <CodeDebugger isDarkMode={isDarkMode} />,
-    dashboard: <StudyDashboard isDarkMode={isDarkMode} />,
-    attendance: <AttendanceTracker isDarkMode={isDarkMode} />,
-    essay: <EssayWriter isDarkMode={isDarkMode} />,
-    timetable: <TimetableBuilder isDarkMode={isDarkMode} />,
+    study:       <StudyPlanner isDarkMode={isDarkMode} />,
+    quiz:        <QuizGenerator isDarkMode={isDarkMode} />,
+    notes:       <NotesSummarizer isDarkMode={isDarkMode} />,
+    career:      <CareerTools isDarkMode={isDarkMode} />,
+    social:      <SocialFeatures isDarkMode={isDarkMode} />,
+    pomodoro:    <PomodoroTimer isDarkMode={isDarkMode} />,
+    gpa:         <GPACalculator isDarkMode={isDarkMode} />,
+    flashcards:  <FlashcardGenerator isDarkMode={isDarkMode} />,
+    debugger:    <CodeDebugger isDarkMode={isDarkMode} />,
+    dashboard:   <StudyDashboard isDarkMode={isDarkMode} />,
+    attendance:  <AttendanceTracker isDarkMode={isDarkMode} />,
+    essay:       <EssayWriter isDarkMode={isDarkMode} />,
+    timetable:   <TimetableBuilder isDarkMode={isDarkMode} />,
   };
 
   const active = FEATURE_TABS.find((t) => t.id === activeTab);
@@ -176,12 +171,7 @@ export function FeaturePanel({ isDarkMode, onClose }) {
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -320, opacity: 0 }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
-      className={`
-  w-full h-full flex flex-col
-  ${styles.bgPrimary}
-  border-r ${styles.borderColor}
-`}
-
+      className={`w-full h-full flex flex-col ${styles.bgPrimary} border-r ${styles.borderColor}`}
     >
       {/* Header */}
       <div className="px-4 py-4 border-b border-gray-700/50 bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 flex-shrink-0">
@@ -211,10 +201,11 @@ export function FeaturePanel({ isDarkMode, onClose }) {
             whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
             onClick={() => setActiveTab(tab.id)}
             title={tab.label}
-            className={`flex-shrink-0 p-2 rounded-xl transition-all ${activeTab === tab.id
-              ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg"
-              : isDarkMode ? "text-gray-400 hover:bg-gray-700" : "text-gray-500 hover:bg-gray-100"
-              }`}
+            className={`flex-shrink-0 p-2 rounded-xl transition-all ${
+              activeTab === tab.id
+                ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg"
+                : isDarkMode ? "text-gray-400 hover:bg-gray-700" : "text-gray-500 hover:bg-gray-100"
+            }`}
           >
             <tab.icon className="text-sm" />
           </motion.button>
@@ -245,16 +236,13 @@ function SettingsModal({ isOpen, onClose, settings, onUpdateSettings, isDarkMode
   const [activeTab, setActiveTab] = useState("appearance");
   const styles = getThemeStyles(isDarkMode);
 
-  const handleSave = () => {
-    onUpdateSettings(localSettings);
-    onClose();
-  };
+  const handleSave = () => { onUpdateSettings(localSettings); onClose(); };
 
   const tabs = [
-    { id: "appearance", label: "Appearance", icon: FaPalette },
-    { id: "notifications", label: "Notifications", icon: FaBell },
-    { id: "privacy", label: "Privacy", icon: FaLock },
-    { id: "language", label: "Language", icon: FaGlobe },
+    { id: "appearance",    label: "Appearance",    icon: FaPalette },
+    { id: "notifications", label: "Notifications", icon: FaBell    },
+    { id: "privacy",       label: "Privacy",       icon: FaLock    },
+    { id: "language",      label: "Language",      icon: FaGlobe   },
   ];
 
   if (!isOpen) return null;
@@ -262,10 +250,11 @@ function SettingsModal({ isOpen, onClose, settings, onUpdateSettings, isDarkMode
   const ToggleSwitch = ({ enabled, onChange, color = "blue" }) => (
     <button
       onClick={onChange}
-      className={`relative w-14 h-7 rounded-full transition-all duration-300 ${enabled
-        ? `bg-gradient-to-r from-${color}-500 to-${color}-600`
-        : isDarkMode ? "bg-gray-600" : "bg-gray-300"
-        }`}
+      className={`relative w-14 h-7 rounded-full transition-all duration-300 ${
+        enabled
+          ? `bg-gradient-to-r from-${color}-500 to-${color}-600`
+          : isDarkMode ? "bg-gray-600" : "bg-gray-300"
+      }`}
     >
       <motion.div
         animate={{ x: enabled ? 28 : 2 }}
@@ -284,7 +273,6 @@ function SettingsModal({ isOpen, onClose, settings, onUpdateSettings, isDarkMode
         transition={{ type: "spring", stiffness: 300, damping: 25 }}
         className={`${styles.bgModal} rounded-2xl md:rounded-3xl w-full max-w-2xl max-h-[85vh] overflow-hidden ${styles.shadowLg} border ${styles.borderColor}`}
       >
-        {/* Header */}
         <div className="px-4 md:px-6 py-4 md:py-5 border-b border-gray-700/50 bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 md:space-x-3">
@@ -307,17 +295,17 @@ function SettingsModal({ isOpen, onClose, settings, onUpdateSettings, isDarkMode
         </div>
 
         <div className="flex flex-col md:flex-row h-[calc(85vh-180px)]">
-          {/* Sidebar Tabs */}
           <div className={`w-full md:w-48 ${isDarkMode ? "bg-gray-800/50" : "bg-gray-100/50"} p-2 md:p-3 border-b md:border-b-0 md:border-r ${styles.borderColor} overflow-x-auto md:overflow-x-visible`}>
             <div className="flex md:flex-col space-x-2 md:space-x-0 md:space-y-0 min-w-max md:min-w-0">
               {tabs.map((tab) => (
                 <motion.button
                   key={tab.id} whileHover={{ x: 4 }} whileTap={{ scale: 0.98 }}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 md:space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-lg md:rounded-xl mb-0 md:mb-2 transition-all whitespace-nowrap ${activeTab === tab.id
-                    ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg"
-                    : `${styles.textSecondary} ${styles.bgHover}`
-                    }`}
+                  className={`flex items-center space-x-2 md:space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-lg md:rounded-xl mb-0 md:mb-2 transition-all whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg"
+                      : `${styles.textSecondary} ${styles.bgHover}`
+                  }`}
                 >
                   <tab.icon className={`text-sm md:text-base ${activeTab === tab.id ? "text-white" : "text-purple-400"}`} />
                   <span className="text-xs md:text-sm font-medium">{tab.label}</span>
@@ -326,7 +314,6 @@ function SettingsModal({ isOpen, onClose, settings, onUpdateSettings, isDarkMode
             </div>
           </div>
 
-          {/* Content */}
           <div className="flex-1 p-4 md:p-6 overflow-y-auto">
             <AnimatePresence mode="wait">
               {activeTab === "appearance" && (
@@ -376,7 +363,6 @@ function SettingsModal({ isOpen, onClose, settings, onUpdateSettings, isDarkMode
                   </div>
                 </motion.div>
               )}
-
               {activeTab === "notifications" && (
                 <motion.div key="notifications" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                   <div className={`${styles.bgCard} rounded-xl md:rounded-2xl p-4 md:p-5 border ${styles.borderColor} space-y-4 md:space-y-6`}>
@@ -403,7 +389,6 @@ function SettingsModal({ isOpen, onClose, settings, onUpdateSettings, isDarkMode
                   </div>
                 </motion.div>
               )}
-
               {activeTab === "privacy" && (
                 <motion.div key="privacy" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                   <div className={`${styles.bgCard} rounded-xl md:rounded-2xl p-4 md:p-5 border ${styles.borderColor}`}>
@@ -420,7 +405,6 @@ function SettingsModal({ isOpen, onClose, settings, onUpdateSettings, isDarkMode
                   </div>
                 </motion.div>
               )}
-
               {activeTab === "language" && (
                 <motion.div key="language" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                   <div className={`${styles.bgCard} rounded-xl md:rounded-2xl p-4 md:p-5 border ${styles.borderColor}`}>
@@ -444,7 +428,6 @@ function SettingsModal({ isOpen, onClose, settings, onUpdateSettings, isDarkMode
           </div>
         </div>
 
-        {/* Footer */}
         <div className={`px-4 md:px-6 py-3 md:py-4 border-t ${styles.borderColor} ${isDarkMode ? "bg-gray-800/50" : "bg-gray-50"} flex justify-end space-x-2 md:space-x-3`}>
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={onClose}
             className={`px-4 md:px-6 py-2 md:py-2.5 ${styles.bgTertiary} ${styles.bgHover} ${styles.textPrimary} rounded-lg md:rounded-xl transition-all font-medium text-sm`}
@@ -572,7 +555,9 @@ function ProfileEditor({ user, onClose, onUpdate, isDarkMode }) {
                 {avatar ? (
                   <img src={avatar} alt="Avatar" className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover border-4 border-purple-500/50 shadow-xl" />
                 ) : (
-                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center text-white font-bold text-2xl md:text-3xl shadow-xl border-4 border-white/20" style={{ background: avatarColor }}>
+                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center text-white font-bold text-2xl md:text-3xl shadow-xl border-4 border-white/20"
+                    style={{ background: avatarColor }}
+                  >
                     {getInitials()}
                   </div>
                 )}
@@ -733,22 +718,39 @@ function Sidebar({
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className={`fixed md:relative left-0 top-0 w-80 h-full ${styles.bgPrimary} border-r ${styles.borderColor} flex flex-col ${styles.shadowLg} z-50`}
           >
-            {/* Premium Header */}
+            {/* ── Premium Header with TMV Logo ── */}
             <div className="p-4 md:p-5 border-b border-gray-700/50 bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+              {/* Decorative blobs */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 md:space-x-3 mb-3 md:mb-4">
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-white/20 backdrop-blur-lg flex items-center justify-center text-white shadow-xl border border-white/30">
-                    <FaRobot className="text-xl md:text-2xl" />
+
+                  {/* ── TMV Logo ── */}
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl overflow-hidden bg-white flex items-center justify-center shadow-xl border border-white/30 flex-shrink-0">
+                    <img
+                      src="/TMV Logo 2_trademark-new1.jpg"
+                      alt="TMV Logo"
+                      className="w-full h-full object-contain p-0.5"
+                      onError={(e) => {
+                        // Fallback to robot icon if image fails to load
+                        e.target.style.display = "none";
+                        e.target.parentNode.innerHTML = '<svg class="text-violet-600 w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 00-1 1v1H7a2 2 0 00-2 2v1H4a1 1 0 000 2h1v5a2 2 0 002 2h6a2 2 0 002-2V9h1a1 1 0 000-2h-1V6a2 2 0 00-2-2H11V3a1 1 0 00-1-1z"/></svg>';
+                      }}
+                    />
                   </div>
+
+                  {/* Title */}
                   <div className="flex-1 min-w-0">
-                    <h2 className="font-bold text-white text-base md:text-lg tracking-tight truncate">College AI</h2>
+                    <h2 className="font-bold text-white text-base md:text-lg tracking-tight truncate">TMV College AI</h2>
                     <p className="text-xs text-white/70 flex items-center space-x-1">
                       <HiSparkles className="text-yellow-300 flex-shrink-0" />
                       <span className="truncate">Your Study Assistant</span>
                     </p>
                   </div>
+
+                  {/* Action buttons */}
                   <div className="flex items-center space-x-1 md:space-x-2 flex-shrink-0">
                     <motion.button whileHover={{ scale: 1.1, rotate: 90 }} whileTap={{ scale: 0.9 }} onClick={() => setShowSettings(true)}
                       className="w-9 h-9 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-white/20 backdrop-blur-lg flex items-center justify-center text-white hover:bg-white/30 transition-all border border-white/30"
@@ -951,10 +953,11 @@ function ChatItem({ chat, isActive, onSelect, onDelete, onToggleBookmark, isDark
   const styles = getThemeStyles(isDarkMode);
   return (
     <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} whileHover={{ x: 4 }}
-      className={`group relative p-2.5 md:p-3.5 rounded-lg md:rounded-xl cursor-pointer transition-all duration-200 ${isActive
-        ? "bg-gradient-to-r from-violet-600 to-purple-600 shadow-lg shadow-purple-500/25"
-        : `${styles.bgCard} ${styles.bgHover} border ${styles.borderColor}`
-        }`}
+      className={`group relative p-2.5 md:p-3.5 rounded-lg md:rounded-xl cursor-pointer transition-all duration-200 ${
+        isActive
+          ? "bg-gradient-to-r from-violet-600 to-purple-600 shadow-lg shadow-purple-500/25"
+          : `${styles.bgCard} ${styles.bgHover} border ${styles.borderColor}`
+      }`}
       onClick={() => onSelect(chat._id)}
     >
       <div className="flex items-start justify-between">
