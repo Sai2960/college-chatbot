@@ -13,10 +13,134 @@ const TABS = [
   { id: "skillgap",  label: "Skill Gap", icon: FaChartBar,   color: "text-red-400"    },
 ];
 
+// ─── Markdown Renderer ────────────────────────────────────────
+function MarkdownResume({ content, isDarkMode }) {
+  const textColor = isDarkMode ? "#f1f5f9" : "#0f172a";
+  const mutedColor = isDarkMode ? "#94a3b8" : "#64748b";
+  const borderColor = isDarkMode ? "#334155" : "#e2e8f0";
+  const sectionBg = isDarkMode ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.02)";
+  const accentColor = isDarkMode ? "#a78bfa" : "#7c3aed";
+
+  const lines = content.split("\n");
+
+  const renderInline = (text) => {
+    // Bold: **text**
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return <strong key={i} style={{ color: isDarkMode ? "#e2e8f0" : "#1e293b", fontWeight: 700 }}>{part.slice(2, -2)}</strong>;
+      }
+      // Handle markdown links [text](url) — strip to just text
+      const linkMatch = part.match(/\[([^\]]+)\]\([^)]+\)/g);
+      if (linkMatch) {
+        return part.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+      }
+      return part;
+    });
+  };
+
+  const elements = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // Skip empty lines
+    if (!line.trim()) { i++; continue; }
+
+    // H1: # Title
+    if (line.startsWith("# ")) {
+      elements.push(
+        <h1 key={i} style={{ color: accentColor, fontSize: "1.25rem", fontWeight: 800, margin: "0 0 4px 0", letterSpacing: "-0.02em" }}>
+          {line.slice(2)}
+        </h1>
+      );
+      i++; continue;
+    }
+
+    // H2: ## Section
+    if (line.startsWith("## ")) {
+      elements.push(
+        <div key={i} style={{ marginTop: "16px", marginBottom: "6px" }}>
+          <h2 style={{ color: accentColor, fontSize: "0.8rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>
+            {line.slice(3)}
+          </h2>
+          <div style={{ height: "1px", background: `linear-gradient(to right, ${accentColor}60, transparent)`, marginTop: "3px" }} />
+        </div>
+      );
+      i++; continue;
+    }
+
+    // H3: ### Sub-section
+    if (line.startsWith("### ")) {
+      elements.push(
+        <h3 key={i} style={{ color: isDarkMode ? "#e2e8f0" : "#1e293b", fontSize: "0.75rem", fontWeight: 700, margin: "8px 0 2px 0" }}>
+          {renderInline(line.slice(4))}
+        </h3>
+      );
+      i++; continue;
+    }
+
+    // Bold-only line: **Section Title**
+    if (line.startsWith("**") && line.endsWith("**") && !line.slice(2, -2).includes("**")) {
+      elements.push(
+        <p key={i} style={{ color: isDarkMode ? "#e2e8f0" : "#1e293b", fontSize: "0.75rem", fontWeight: 700, margin: "10px 0 3px 0" }}>
+          {line.slice(2, -2)}
+        </p>
+      );
+      i++; continue;
+    }
+
+    // Bullet: - item
+    if (line.startsWith("- ") || line.startsWith("* ")) {
+      const bulletItems = [];
+      while (i < lines.length && (lines[i].startsWith("- ") || lines[i].startsWith("* "))) {
+        bulletItems.push(lines[i].slice(2));
+        i++;
+      }
+      elements.push(
+        <ul key={`ul-${i}`} style={{ margin: "3px 0 3px 0", paddingLeft: "14px", listStyle: "none" }}>
+          {bulletItems.map((item, j) => (
+            <li key={j} style={{ color: textColor, fontSize: "0.72rem", lineHeight: "1.6", position: "relative", paddingLeft: "10px", marginBottom: "1px" }}>
+              <span style={{ position: "absolute", left: 0, color: accentColor, fontWeight: 700 }}>›</span>
+              {renderInline(item)}
+            </li>
+          ))}
+        </ul>
+      );
+      continue;
+    }
+
+    // Contact info line (contains | separators or email/phone patterns)
+    if (line.includes("|") || line.includes("@") || line.match(/\d{3}[-.\s]\d{3}/)) {
+      elements.push(
+        <p key={i} style={{ color: mutedColor, fontSize: "0.68rem", margin: "2px 0", textAlign: "center" }}>
+          {line.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")}
+        </p>
+      );
+      i++; continue;
+    }
+
+    // Regular paragraph
+    elements.push(
+      <p key={i} style={{ color: textColor, fontSize: "0.72rem", lineHeight: "1.65", margin: "2px 0" }}>
+        {renderInline(line)}
+      </p>
+    );
+    i++;
+  }
+
+  return (
+    <div style={{ fontFamily: "'Georgia', serif", padding: "4px 2px" }}>
+      {elements}
+    </div>
+  );
+}
+
 export default function CareerTools({ isDarkMode }) {
   const [activeTab, setActiveTab] = useState("resume");
   const cardBg      = isDarkMode ? "bg-gray-800/80 border-gray-700" : "bg-white border-gray-200";
-  const inputBg     = isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-gray-100 text-gray-900 border-gray-300";
+  const inputBg     = isDarkMode ? "bg-gray-700 text-white border-gray-600 placeholder-gray-400" : "bg-gray-100 text-gray-900 border-gray-300 placeholder-gray-500";
   const textPrimary = isDarkMode ? "text-white" : "text-gray-900";
   const textMuted   = isDarkMode ? "text-gray-400" : "text-gray-500";
 
@@ -66,8 +190,6 @@ function ResumeBuilder({ isDarkMode, cardBg, inputBg, textPrimary, textMuted }) 
       const { data } = await axios.post("/api/career/resume", form);
       const result = data.data.resume;
       setResume(result);
-
-      // ✅ Save to history
       history.save({
         title:   `Resume: ${form.name} — ${form.targetRole || form.course}`,
         preview: `${form.course} • Sem ${form.semester} • ${form.targetRole || "General"}`,
@@ -79,6 +201,9 @@ function ResumeBuilder({ isDarkMode, cardBg, inputBg, textPrimary, textMuted }) 
   };
 
   const handleCopy = () => { navigator.clipboard.writeText(resume); setCopied(true); setTimeout(() => setCopied(false), 2000); };
+
+  const resumeBg    = isDarkMode ? "#1e293b" : "#f8fafc";
+  const resumeBorder = isDarkMode ? "#334155" : "#e2e8f0";
 
   return (
     <div className="space-y-3">
@@ -119,16 +244,58 @@ function ResumeBuilder({ isDarkMode, cardBg, inputBg, textPrimary, textMuted }) 
       </div>
 
       {resume && (
-        <div className={`${cardBg} border rounded-2xl p-4`}>
-          <div className="flex items-center justify-between mb-3">
-            <h4 className={`text-xs font-bold ${textPrimary}`}>Your Resume</h4>
-            <button onClick={handleCopy}
-              className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg ${copied ? "bg-green-500/20 text-green-400" : "bg-blue-500/20 text-blue-400"}`}>
-              {copied ? <FaCheck className="text-[10px]" /> : <FaCopy className="text-[10px]" />}
-              {copied ? "Copied!" : "Copy"}
-            </button>
+        <div
+          className="border rounded-2xl overflow-hidden"
+          style={{ borderColor: resumeBorder }}
+        >
+          {/* Header bar */}
+          <div
+            className="flex items-center justify-between px-4 py-2.5"
+            style={{
+              background: isDarkMode
+                ? "linear-gradient(135deg, #1e1b4b, #312e81)"
+                : "linear-gradient(135deg, #ede9fe, #ddd6fe)",
+              borderBottom: `1px solid ${resumeBorder}`,
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <FaFileAlt className={isDarkMode ? "text-violet-300" : "text-violet-600"} />
+              <span
+                className="text-xs font-bold"
+                style={{ color: isDarkMode ? "#c4b5fd" : "#5b21b6" }}
+              >
+                Your Resume
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-1.5 text-xs px-3 py-1 rounded-lg font-medium transition-all"
+                style={{
+                  background: copied
+                    ? isDarkMode ? "rgba(34,197,94,0.2)" : "rgba(22,163,74,0.15)"
+                    : isDarkMode ? "rgba(139,92,246,0.25)" : "rgba(109,40,217,0.12)",
+                  color: copied
+                    ? isDarkMode ? "#86efac" : "#166534"
+                    : isDarkMode ? "#c4b5fd" : "#5b21b6",
+                }}
+              >
+                {copied ? <FaCheck className="text-[10px]" /> : <FaCopy className="text-[10px]" />}
+                {copied ? "Copied!" : "Copy"}
+              </button>
+            </div>
           </div>
-          <pre className={`text-xs ${textPrimary} whitespace-pre-wrap leading-relaxed font-sans`}>{resume}</pre>
+
+          {/* Resume content */}
+          <div
+            className="p-4 overflow-y-auto"
+            style={{
+              background: resumeBg,
+              maxHeight: "520px",
+            }}
+          >
+            <MarkdownResume content={resume} isDarkMode={isDarkMode} />
+          </div>
         </div>
       )}
     </div>
@@ -150,8 +317,6 @@ function InterviewPractice({ isDarkMode, cardBg, inputBg, textPrimary, textMuted
       const { data } = await axios.post("/api/career/interview", form);
       const qs = data.data.questions;
       setQuestions(qs);
-
-      // ✅ Save to history
       history.save({
         title:     `Interview: ${form.role}`,
         preview:   `${form.difficulty} • ${form.type} • ${qs.length} questions`,
@@ -162,7 +327,11 @@ function InterviewPractice({ isDarkMode, cardBg, inputBg, textPrimary, textMuted
     finally { setLoading(false); }
   };
 
-  const categoryColor = { technical: "text-blue-400 bg-blue-400/10", hr: "text-green-400 bg-green-400/10", situational: "text-yellow-400 bg-yellow-400/10" };
+  const categoryColor = {
+    technical:   isDarkMode ? "text-blue-300 bg-blue-500/20"   : "text-blue-700 bg-blue-100",
+    hr:          isDarkMode ? "text-green-300 bg-green-500/20" : "text-green-700 bg-green-100",
+    situational: isDarkMode ? "text-yellow-300 bg-yellow-500/20" : "text-yellow-700 bg-yellow-100",
+  };
 
   return (
     <div className="space-y-3">
@@ -201,7 +370,7 @@ function InterviewPractice({ isDarkMode, cardBg, inputBg, textPrimary, textMuted
           className={`${cardBg} border rounded-2xl overflow-hidden`}>
           <button onClick={() => setExpanded(expanded === i ? null : i)}
             className="w-full p-3 text-left flex items-start gap-2">
-            <span className={`flex-shrink-0 text-xs px-2 py-0.5 rounded-full font-medium ${categoryColor[q.category] || "text-purple-400 bg-purple-400/10"}`}>
+            <span className={`flex-shrink-0 text-xs px-2 py-0.5 rounded-full font-medium ${categoryColor[q.category] || (isDarkMode ? "text-purple-300 bg-purple-500/20" : "text-purple-700 bg-purple-100")}`}>
               {q.category}
             </span>
             <p className={`text-xs font-semibold ${textPrimary} flex-1`}>{i+1}. {q.question}</p>
@@ -211,17 +380,17 @@ function InterviewPractice({ isDarkMode, cardBg, inputBg, textPrimary, textMuted
               <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }}
                 className={`overflow-hidden border-t ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}>
                 <div className="p-3 space-y-2">
-                  <div className="bg-blue-500/10 rounded-xl p-2.5">
-                    <p className="text-xs font-semibold text-blue-400 mb-1">👀 What they're looking for:</p>
-                    <p className={`text-xs ${textPrimary}`}>{q.lookingFor}</p>
+                  <div className={`rounded-xl p-2.5 ${isDarkMode ? "bg-blue-900/40" : "bg-blue-50"}`}>
+                    <p className={`text-xs font-semibold mb-1 ${isDarkMode ? "text-blue-300" : "text-blue-700"}`}>👀 What they're looking for:</p>
+                    <p className={`text-xs ${isDarkMode ? "text-blue-100" : "text-blue-900"}`}>{q.lookingFor}</p>
                   </div>
-                  <div className="bg-green-500/10 rounded-xl p-2.5">
-                    <p className="text-xs font-semibold text-green-400 mb-1">✅ Model Answer:</p>
-                    <p className={`text-xs ${textPrimary}`}>{q.modelAnswer}</p>
+                  <div className={`rounded-xl p-2.5 ${isDarkMode ? "bg-green-900/40" : "bg-green-50"}`}>
+                    <p className={`text-xs font-semibold mb-1 ${isDarkMode ? "text-green-300" : "text-green-700"}`}>✅ Model Answer:</p>
+                    <p className={`text-xs ${isDarkMode ? "text-green-100" : "text-green-900"}`}>{q.modelAnswer}</p>
                   </div>
-                  <div className="bg-yellow-500/10 rounded-xl p-2.5">
-                    <p className="text-xs font-semibold text-yellow-400 mb-1">💡 Tip:</p>
-                    <p className={`text-xs ${textPrimary}`}>{q.tip}</p>
+                  <div className={`rounded-xl p-2.5 ${isDarkMode ? "bg-yellow-900/40" : "bg-yellow-50"}`}>
+                    <p className={`text-xs font-semibold mb-1 ${isDarkMode ? "text-yellow-300" : "text-yellow-700"}`}>💡 Tip:</p>
+                    <p className={`text-xs ${isDarkMode ? "text-yellow-100" : "text-yellow-900"}`}>{q.tip}</p>
                   </div>
                 </div>
               </motion.div>
@@ -296,13 +465,13 @@ function JobSuggestions({ isDarkMode, cardBg, inputBg, textPrimary, textMuted })
               <p className={`text-sm font-bold ${textPrimary}`}>{job.role}</p>
               <div className="flex flex-wrap gap-1">
                 {job.skills_needed?.map((s, j) => (
-                  <span key={j} className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded-full">{s}</span>
+                  <span key={j} className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? "bg-purple-500/20 text-purple-300" : "bg-purple-100 text-purple-700"}`}>{s}</span>
                 ))}
               </div>
               <p className={`text-xs ${textMuted}`}>🏢 {job.companies?.join(", ")} | {tab === "internships" ? `💰 ${job.stipend}` : `💰 ${job.salary_range}`}</p>
               <div className="flex flex-wrap gap-1">
                 {job.where_to_apply?.map((w, j) => (
-                  <span key={j} className="text-xs px-2 py-0.5 bg-blue-500/20 text-blue-300 rounded-full">📍 {w}</span>
+                  <span key={j} className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? "bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-700"}`}>📍 {w}</span>
                 ))}
               </div>
             </div>
@@ -333,8 +502,6 @@ function SkillGapAnalyzer({ isDarkMode, cardBg, inputBg, textPrimary, textMuted 
       const res = await axios.post("/api/career/skillgap", form);
       const result = res.data.data;
       setData(result);
-
-      // ✅ Save to history
       history.save({
         title:   `Skill Gap: ${form.targetRole}`,
         preview: `Readiness: ${result.readinessScore}% • ${result.estimatedTimeToReady} to job-ready`,
@@ -345,7 +512,13 @@ function SkillGapAnalyzer({ isDarkMode, cardBg, inputBg, textPrimary, textMuted 
     finally { setLoading(false); }
   };
 
-  const priorityColor = { high: "text-red-400 bg-red-400/10 border-red-400/30", medium: "text-yellow-400 bg-yellow-400/10 border-yellow-400/30", low: "text-green-400 bg-green-400/10 border-green-400/30" };
+  const priorityColor = {
+    high:   isDarkMode ? "text-red-300 bg-red-900/40 border-red-500/30"    : "text-red-700 bg-red-50 border-red-200",
+    medium: isDarkMode ? "text-yellow-300 bg-yellow-900/40 border-yellow-500/30" : "text-yellow-700 bg-yellow-50 border-yellow-200",
+    low:    isDarkMode ? "text-green-300 bg-green-900/40 border-green-500/30"  : "text-green-700 bg-green-50 border-green-200",
+  };
+
+  const barColor = (score) => score >= 70 ? (isDarkMode ? "#4ade80" : "#16a34a") : score >= 40 ? (isDarkMode ? "#facc15" : "#ca8a04") : (isDarkMode ? "#f87171" : "#dc2626");
 
   return (
     <div className="space-y-3">
@@ -374,10 +547,11 @@ function SkillGapAnalyzer({ isDarkMode, cardBg, inputBg, textPrimary, textMuted 
           <div className={`${cardBg} border rounded-2xl p-4`}>
             <div className="flex items-center justify-between mb-2">
               <p className={`text-xs font-bold ${textPrimary}`}>Readiness Score</p>
-              <span className={`text-lg font-bold ${data.readinessScore >= 70 ? "text-green-400" : data.readinessScore >= 40 ? "text-yellow-400" : "text-red-400"}`}>{data.readinessScore}%</span>
+              <span className="text-lg font-bold" style={{ color: barColor(data.readinessScore) }}>{data.readinessScore}%</span>
             </div>
-            <div className="w-full bg-gray-700 rounded-full h-2">
-              <div className={`h-2 rounded-full ${data.readinessScore >= 70 ? "bg-green-400" : data.readinessScore >= 40 ? "bg-yellow-400" : "bg-red-400"}`} style={{ width: `${data.readinessScore}%` }} />
+            <div className={`w-full rounded-full h-2 ${isDarkMode ? "bg-gray-700" : "bg-gray-200"}`}>
+              <div className="h-2 rounded-full transition-all duration-700"
+                style={{ width: `${data.readinessScore}%`, background: barColor(data.readinessScore) }} />
             </div>
             <p className={`text-xs mt-2 ${textMuted}`}>⏱ {data.estimatedTimeToReady} to be job-ready</p>
           </div>
@@ -386,14 +560,16 @@ function SkillGapAnalyzer({ isDarkMode, cardBg, inputBg, textPrimary, textMuted 
             <p className={`text-xs font-bold mb-2 ${textPrimary}`}>🚨 Skills to Learn</p>
             <div className="space-y-2">
               {data.missingSkills?.map((s, i) => (
-                <div key={i} className={`border rounded-xl p-2.5 ${priorityColor[s.priority]}`}>
+                <div key={i} className={`border rounded-xl p-2.5 ${priorityColor[s.priority] || priorityColor.medium}`}>
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-semibold">{s.skill}</p>
-                    <span className={`text-xs px-1.5 py-0.5 rounded-full border text-[10px] ${priorityColor[s.priority]}`}>{s.priority}</span>
+                    <span className={`text-xs px-1.5 py-0.5 rounded-full border text-[10px] font-medium ${priorityColor[s.priority] || priorityColor.medium}`}>{s.priority}</span>
                   </div>
                   <p className={`text-xs mt-1 ${textMuted}`}>⏱ {s.timeToLearn}</p>
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {s.resources?.map((r, j) => <span key={j} className="text-[10px] px-1.5 py-0.5 bg-white/10 rounded-full">{r}</span>)}
+                    {s.resources?.map((r, j) => (
+                      <span key={j} className={`text-[10px] px-1.5 py-0.5 rounded-full ${isDarkMode ? "bg-white/10 text-gray-300" : "bg-gray-200 text-gray-700"}`}>{r}</span>
+                    ))}
                   </div>
                 </div>
               ))}
@@ -409,7 +585,9 @@ function SkillGapAnalyzer({ isDarkMode, cardBg, inputBg, textPrimary, textMuted 
                   <div>
                     <p className={`text-xs font-semibold ${textPrimary}`}>{month.focus}</p>
                     <div className="flex flex-wrap gap-1 mt-1">
-                      {month.skills?.map((s, j) => <span key={j} className="text-[10px] px-1.5 py-0.5 bg-purple-500/20 text-purple-300 rounded-full">{s}</span>)}
+                      {month.skills?.map((s, j) => (
+                        <span key={j} className={`text-[10px] px-1.5 py-0.5 rounded-full ${isDarkMode ? "bg-purple-500/20 text-purple-300" : "bg-purple-100 text-purple-700"}`}>{s}</span>
+                      ))}
                     </div>
                   </div>
                 </div>
