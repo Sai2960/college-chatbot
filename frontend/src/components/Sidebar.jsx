@@ -730,7 +730,7 @@ function Sidebar({
                   {/* ── TMV Logo ── */}
                   <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl overflow-hidden bg-white flex items-center justify-center shadow-xl border border-white/30 flex-shrink-0">
                     <img
-                      src="/TMV Logo 2_trademark-new1.jpg"
+                    src="/tmv-logo.jpg"
                       alt="TMV Logo"
                       className="w-full h-full object-contain p-0.5"
                       onError={(e) => {
